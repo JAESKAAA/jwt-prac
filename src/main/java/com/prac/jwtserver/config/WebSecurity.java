@@ -2,6 +2,8 @@ package com.prac.jwtserver.config;
 
 import com.prac.jwtserver.filter.MyFilter3;
 import com.prac.jwtserver.jwt.JwtAuthenticationFilter;
+import com.prac.jwtserver.jwt.JwtAuthorizationFilter;
+import com.prac.jwtserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +21,7 @@ import org.springframework.web.filter.CorsFilter;
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     private final CorsFilter corsFilter;
+    private final UserRepository userRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -35,6 +38,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             .formLogin().disable()
             .httpBasic().disable() //기본인증이 아닌 토큰을 통한 Bearer방식 사용을 위해 비활성화처리
             .addFilter(new JwtAuthenticationFilter(authenticationManager())) //AuthenticationManager 를 파라미터로 필요로함
+            .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository)) //AuthenticationManager 를 파라미터로 필요로함
             .authorizeRequests()
             .antMatchers("/api/v1/user/**")
             .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")

@@ -31,12 +31,12 @@ public class MyFilter3 implements Filter {
             String headerAuth = req.getHeader("Authorization");
             System.out.println("headerAuth = " + headerAuth);
 
-            if (headerAuth.equals("cos")) {
-                chain.doFilter(req, res);
-            } else {
-                PrintWriter out = res.getWriter();
-                out.println("인증 안됨");
-            }
+//            if (headerAuth.equals("cos")) {
+//                chain.doFilter(req, res);
+//            } else {
+//                PrintWriter out = res.getWriter();
+//                out.println("인증 안됨");
+//            }
         }
 
         System.out.println("필터3");
