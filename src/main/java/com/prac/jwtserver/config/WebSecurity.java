@@ -25,7 +25,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.addFilterBefore(new MyFilter3(), SecurityContextPersistenceFilter.class);
+
+        //커스텀 필터를 그냥 addFilter로 등록시, 시큐리티 필터에 등록 되어 있지 않기 때문에 Bean creation 에러 발생
+        //따라서, 시큐리티 필터 전 후로 필터설정을 해줘야하는데, 그때 쓰이는게 add 또는 before필터임
+        //시큐리티 필터 체인은 커스텀 보다 먼저 실행되게 되어있음. (그래서 마이필터1,2가 나중에 실행되는 것이며, after설정으로 바꿔도 마찬가지임)
+        //시큐리티 필터 체인 순서는 구글링해서 참고하용
+       http.addFilterBefore(new MyFilter3(), SecurityContextPersistenceFilter.class);
         http.csrf().disable();
         http.authorizeHttpRequests().antMatchers("/h2-console/**", "/member/**").permitAll();
 
@@ -35,7 +40,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .addFilter(corsFilter) //@CrossOrigin (인증X), 시큐리티 필터에 등록해야함
-            .formLogin().disable()
+            .formLogin().disable() //폼 로그인 안쓴다는 내용
             .httpBasic().disable() //기본인증이 아닌 토큰을 통한 Bearer방식 사용을 위해 비활성화처리
             .addFilter(new JwtAuthenticationFilter(authenticationManager())) //AuthenticationManager 를 파라미터로 필요로함
             .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository)) //AuthenticationManager 를 파라미터로 필요로함

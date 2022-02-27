@@ -18,6 +18,6 @@ public class MyFilter1 implements Filter {
 
 
         System.out.println("필터1");
-        chain.doFilter(request, response);
+        chain.doFilter(request, response); //체인 안걸고 printWriter등을 쓰면 다음 필터로 안넘어 가고 프로그램이 종료되어 버림 주의!
     }
 }
